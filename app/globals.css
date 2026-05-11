@@ -1,0 +1,59 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-background: #080706;
+  --color-foreground: #F8F3E8;
+  --color-surface: #11100d;
+  --color-surface-light: #17120d;
+  --color-gold: #FFD84D;
+  --color-gold-dark: #F5C542;
+  --color-ivory: #F8F3E8;
+  --color-muted: #A7A29A;
+  
+  --background-image-glass: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+
+  --font-serif: var(--font-playfair), serif;
+  --font-sans: var(--font-inter), sans-serif;
+}
+
+:root {
+  --background: #080706;
+  --foreground: #F8F3E8;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased overflow-x-hidden;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+
+  button, a, [role="button"], input[type="submit"], input[type="button"] {
+    cursor: pointer !important;
+  }
+}
+
+/* Subtle grain texture overlay */
+.grain-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.glass-card {
+  @apply bg-glass border border-white/10 backdrop-blur-md rounded-[2rem];
+}
+
+.text-reveal {
+  @apply overflow-hidden;
+}
