@@ -4,8 +4,10 @@ import Link from "next/link";
 import AnimatedSection from "./AnimatedSection";
 import { formatPrice } from "@/lib/utils";
 
+import { Product } from "@/lib/types";
+
 export default async function FeaturedDish() {
-  let products = [];
+  let products: Product[] = [];
   try {
     products = await getProducts(1);
   } catch (error) {

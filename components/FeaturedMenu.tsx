@@ -2,8 +2,10 @@ import { getProducts } from "@/lib/shopify";
 import ProductCard from "./ProductCard";
 import AnimatedSection from "./AnimatedSection";
 
+import { Product } from "@/lib/types";
+
 export default async function FeaturedMenu() {
-  let products = [];
+  let products: Product[] = [];
   try {
     products = await getProducts(8);
   } catch (error) {

@@ -198,10 +198,10 @@ export async function getCollectionByHandle(handle: string) {
   return res.data.collection;
 }
 
-export async function createCart(lines: any[]) {
+export async function createCart(lines: { merchandiseId: string; quantity: number }[]) {
   const query = `
-    mutation createCart($lines: [CartLineInput!]) {
-      cartCreate(input: { lines: $lines }) {
+    mutation cartCreate($input: CartInput) {
+      cartCreate(input: $input) {
         cart {
           ...CartFields
         }
@@ -210,10 +210,13 @@ export async function createCart(lines: any[]) {
     ${CART_FRAGMENT}
   `;
 
-  const res = await shopifyFetch<{ cartCreate: { cart: any } }>({
+  const res = await shopifyFetch<{ cartCreate: { cart: Cart } }>({
     query,
-    variables: { lines },
-    cache: 'no-store',
+    variables: {
+      input: {
+        lines,
+      },
+    },
   });
 
   return res.data.cartCreate.cart;
@@ -229,7 +232,7 @@ export async function getCart(cartId: string) {
     ${CART_FRAGMENT}
   `;
 
-  const res = await shopifyFetch<{ cart: any }>({
+  const res = await shopifyFetch<{ cart: Cart }>({
     query,
     variables: { cartId },
     cache: 'no-store',
@@ -238,9 +241,9 @@ export async function getCart(cartId: string) {
   return res.data.cart;
 }
 
-export async function addLinesToCart(cartId: string, lines: any[]) {
+export async function addLinesToCart(cartId: string, lines: { merchandiseId: string; quantity: number }[]) {
   const query = `
-    mutation addLinesToCart($cartId: ID!, $lines: [CartLineInput!]!) {
+    mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
       cartLinesAdd(cartId: $cartId, lines: $lines) {
         cart {
           ...CartFields
@@ -250,18 +253,17 @@ export async function addLinesToCart(cartId: string, lines: any[]) {
     ${CART_FRAGMENT}
   `;
 
-  const res = await shopifyFetch<{ cartLinesAdd: { cart: any } }>({
+  const res = await shopifyFetch<{ cartLinesAdd: { cart: Cart } }>({
     query,
     variables: { cartId, lines },
-    cache: 'no-store',
   });
 
   return res.data.cartLinesAdd.cart;
 }
 
-export async function updateCartLines(cartId: string, lines: any[]) {
+export async function updateCartLines(cartId: string, lines: { id: string; merchandiseId?: string; quantity?: number }[]) {
   const query = `
-    mutation updateCartLines($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+    mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
       cartLinesUpdate(cartId: $cartId, lines: $lines) {
         cart {
           ...CartFields
@@ -271,10 +273,9 @@ export async function updateCartLines(cartId: string, lines: any[]) {
     ${CART_FRAGMENT}
   `;
 
-  const res = await shopifyFetch<{ cartLinesUpdate: { cart: any } }>({
+  const res = await shopifyFetch<{ cartLinesUpdate: { cart: Cart } }>({
     query,
     variables: { cartId, lines },
-    cache: 'no-store',
   });
 
   return res.data.cartLinesUpdate.cart;
