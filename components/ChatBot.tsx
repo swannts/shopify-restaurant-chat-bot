@@ -99,18 +99,15 @@ export default function ChatBot() {
     <>
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
+          width: 3px;
+          height: 0px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.02);
-          border-radius: 10px;
+          background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: linear-gradient(to bottom, transparent, #FFD84D, transparent);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #FFD84D;
+          border-radius: 10px;
         }
       `}</style>
 
@@ -152,7 +149,7 @@ export default function ChatBot() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden p-8 space-y-8 custom-scrollbar">
               {messages.map((msg, i) => (
                 <motion.div key={i} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${msg.role === "user" ? "bg-gold/20 border-gold/40" : "bg-white/5 border-white/10"}`}>
