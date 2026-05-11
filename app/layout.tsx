@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { CartProvider } from "@/lib/cart";
 import CartDrawer from "@/components/CartDrawer";
 import ChatBot from "@/components/ChatBot";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
           <ChatBot />
           <main>{children}</main>
           <Footer />
+          <Analytics />
         </CartProvider>
       </body>
     </html>

@@ -5,8 +5,38 @@ import { getProducts } from "@/lib/shopify";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 
+// --- Simple IP-based Rate Limiter (In-Memory) ---
+const rateLimitMap = new Map<string, { count: number, lastReset: number }>();
+const RATE_LIMIT_COUNT = 5;
+const RATE_LIMIT_WINDOW = 60000; // 1 minute
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const userData = rateLimitMap.get(ip) || { count: 0, lastReset: now };
+
+  if (now - userData.lastReset > RATE_LIMIT_WINDOW) {
+    userData.count = 1;
+    userData.lastReset = now;
+    rateLimitMap.set(ip, userData);
+    return false;
+  }
+
+  userData.count += 1;
+  rateLimitMap.set(ip, userData);
+  return userData.count > RATE_LIMIT_COUNT;
+}
+// ------------------------------------------------
+
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "anonymous";
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { reply: "I apologize, but our concierge is receiving many requests. Please wait a moment before asking again." },
+        { status: 429 }
+      );
+    }
+
     const { message, history = [] } = await req.json();
 
     // 1. RAG - Fetch current menu context from Shopify
