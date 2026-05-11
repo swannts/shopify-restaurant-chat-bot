@@ -5,12 +5,7 @@ import ProductCard from "@/components/ProductCard";
 import AnimatedSection from "@/components/AnimatedSection";
 import { motion, AnimatePresence } from "framer-motion";
 
-interface Product {
-  id: string;
-  title: string;
-  productType: string;
-  [key: string]: any;
-}
+import { Product } from "@/lib/types";
 
 interface MenuContentProps {
   products: Product[];

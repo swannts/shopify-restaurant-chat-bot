@@ -5,6 +5,8 @@ const accessToken = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 const adminToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
 const apiVersion = process.env.SHOPIFY_API_VERSION || '2026-01';
 
+import { Product, Collection, Cart } from "./types";
+
 const endpoint = `https://${domain}/api/${apiVersion}/graphql.json`;
 const adminEndpoint = `https://${domain}/admin/api/${apiVersion}/graphql.json`;
 
@@ -144,7 +146,7 @@ export async function getProducts(first = 10) {
     ${PRODUCT_FRAGMENT}
   `;
 
-  const res = await shopifyFetch<{ products: { nodes: any[] } }>({
+  const res = await shopifyFetch<{ products: { nodes: Product[] } }>({
     query,
     variables: { first },
   });

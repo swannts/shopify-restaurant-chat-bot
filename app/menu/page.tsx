@@ -7,8 +7,10 @@ export const metadata = {
   description: "Explore our chef-curated selections, from seasonal starters to exquisite wine pairings.",
 };
 
+import { Product } from "@/lib/types";
+
 export default async function MenuPage() {
-  let products = [];
+  let products: Product[] = [];
   try {
     products = await getProducts(50);
   } catch (error) {
