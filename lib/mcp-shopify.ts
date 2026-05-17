@@ -4,7 +4,7 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { getProducts, createCart, addLinesToCart } from "./shopify";
+import { getProducts } from "./shopify";
 
 /**
  * Maison Étoile MCP Server
@@ -87,9 +87,10 @@ export class ShopifyMCPServer {
         }
 
         throw new Error(`Tool not found: ${name}`);
-      } catch (error: any) {
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
         return {
-          content: [{ type: "text", text: `Error: ${error.message}` }],
+          content: [{ type: "text", text: `Error: ${message}` }],
           isError: true,
         };
       }

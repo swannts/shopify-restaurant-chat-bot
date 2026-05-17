@@ -45,11 +45,13 @@ export default function ChatBot() {
         if (now - timestamp < EXPIRY_TIME) {
           initialMessages = savedMessages;
         }
-      } catch (e) {
+      } catch {
         console.error("Failed to parse chat history");
       }
     }
-    setMessages(initialMessages);
+    setTimeout(() => {
+      setMessages(initialMessages);
+    }, 0);
   }, []);
 
   // 2. Persistence and Scroll Hook
@@ -88,7 +90,7 @@ export default function ChatBot() {
         }
       }
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
-    } catch (error) {
+    } catch {
       setMessages((prev) => [...prev, { role: "assistant", content: "I apologize, but I am momentarily indisposed." }]);
     } finally {
       setIsLoading(false);
@@ -160,11 +162,11 @@ export default function ChatBot() {
                       <ReactMarkdown 
                         remarkPlugins={[remarkGfm]}
                         components={{
-                          a: ({ node, ...props }) => {
-                            if (props.href?.startsWith("/")) {
-                              return <Link {...props} href={props.href} onClick={() => setIsOpen(false)} />;
+                          a: ({ href, children }) => {
+                            if (href?.startsWith("/")) {
+                              return <Link href={href} onClick={() => setIsOpen(false)}>{children}</Link>;
                             }
-                            return <a {...props} target="_blank" rel="noopener noreferrer" />;
+                            return <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>;
                           }
                         }}
                       >

@@ -16,7 +16,7 @@ async function shopifyFetch<T>({
   cache = 'force-cache',
 }: {
   query: string;
-  variables?: any;
+  variables?: Record<string, unknown>;
   cache?: RequestCache;
 }): Promise<{ data: T } | never> {
   try {
@@ -39,9 +39,10 @@ async function shopifyFetch<T>({
     }
 
     return body;
-  } catch (e: any) {
-    console.error('Shopify fetch error:', e.message);
-    throw new Error(`Shopify Fetch Failed: ${e.message}`);
+  } catch (e) {
+    const err = e instanceof Error ? e : new Error(String(e));
+    console.error('Shopify fetch error:', err.message);
+    throw new Error(`Shopify Fetch Failed: ${err.message}`);
   }
 }
 
@@ -164,7 +165,7 @@ export async function getProductByHandle(handle: string) {
     ${PRODUCT_FRAGMENT}
   `;
 
-  const res = await shopifyFetch<{ product: any }>({
+  const res = await shopifyFetch<{ product: Product | null }>({
     query,
     variables: { handle },
   });
@@ -190,7 +191,7 @@ export async function getCollectionByHandle(handle: string) {
     ${PRODUCT_FRAGMENT}
   `;
 
-  const res = await shopifyFetch<{ collection: any }>({
+  const res = await shopifyFetch<{ collection: Collection | null }>({
     query,
     variables: { handle },
   });
@@ -293,7 +294,7 @@ export async function removeCartLines(cartId: string, lineIds: string[]) {
     ${CART_FRAGMENT}
   `;
 
-  const res = await shopifyFetch<{ cartLinesRemove: { cart: any } }>({
+  const res = await shopifyFetch<{ cartLinesRemove: { cart: Cart } }>({
     query,
     variables: { cartId, lineIds },
     cache: 'no-store',
@@ -309,7 +310,7 @@ async function adminFetch<T>({
   variables,
 }: {
   query: string;
-  variables?: any;
+  variables?: Record<string, unknown>;
 }): Promise<{ data: T } | never> {
   try {
     const result = await fetch(adminEndpoint, {
@@ -329,9 +330,10 @@ async function adminFetch<T>({
     }
 
     return body;
-  } catch (e: any) {
-    console.error('Shopify Admin fetch error:', e.message);
-    throw new Error(`Admin Fetch Failed: ${e.message}`);
+  } catch (e) {
+    const err = e instanceof Error ? e : new Error(String(e));
+    console.error('Shopify Admin fetch error:', err.message);
+    throw new Error(`Admin Fetch Failed: ${err.message}`);
   }
 }
 
@@ -360,7 +362,12 @@ export async function createDraftOrder(email: string, lineItems: { variantId: st
     }))
   };
 
-  const res = await adminFetch<{ draftOrderCreate: { draftOrder: any; userErrors: any[] } }>({
+  const res = await adminFetch<{ 
+    draftOrderCreate: { 
+      draftOrder: { id: string; invoiceUrl: string; status: string } | null; 
+      userErrors: { field: string[] | null; message: string }[] 
+    } 
+  }>({
     query,
     variables: { input },
   });

@@ -91,7 +91,7 @@ export async function POST(req: Request) {
     // 5. Execute the Chain
     const response = await chain.invoke({
       input: message,
-      history: history.map((h: any) => [h.role, h.content]),
+      history: history.map((h: { role: string; content: string }) => [h.role, h.content]),
     });
 
     // 6. Handle Tool Parsing (Resilient Regex for MCP-style calls)
@@ -121,8 +121,9 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ reply: response });
-  } catch (error: any) {
-    console.error("LangChain Chat Error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    console.error("LangChain Chat Error:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
